@@ -38,6 +38,13 @@ module.exports = {
     workboxPluginMode: 'InjectManifest',
     workboxOptions: {
       swSrc: path.resolve(__dirname, 'src/pwa/service-worker.js')
+    },
+    iconPaths: {
+      favicon32: 'logo.png',
+      favicon16: 'logo.png',
+      appleTouchIcon: 'logo.png',
+      maskIcon: 'logo.png',
+      msTileImage: 'logo.png'
     }
   },
   pluginOptions: {

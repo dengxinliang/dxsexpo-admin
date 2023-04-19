@@ -177,6 +177,8 @@ export default class extends Vue {
 .svg-icon {
   margin-right: 16px;
   vertical-align: middle;
+  width: 18px !important;
+  height: 18px !important;
 }
 
 .simple-mode {

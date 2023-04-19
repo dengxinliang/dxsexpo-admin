@@ -43,7 +43,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 export default class extends Vue {
   @Prop({ required: true }) private collapse!: boolean
 
-  private title = '管理系统'//settings.title
+  private title = '管理系统'// settings.title
 }
 </script>
 
@@ -75,6 +75,8 @@ export default class extends Vue {
       height: 32px;
       vertical-align: middle;
       margin-right: 12px;
+      background: #fff;
+      border-radius: 100%;
     }
 
     & .sidebar-title {
