@@ -75,7 +75,20 @@ class User extends VuexModule implements IUserState {
     if (this.token === '') {
       throw Error('GetUserInfo: token is undefined!')
     }
-    const { data } = await getUserInfo({ /* Your params here */ })
+    const data = {
+      user: {
+        avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+        email: 'admin@test.com',
+        id: 0,
+        introduction: 'I am a super administrator',
+        name: 'Super Admin',
+        password: 'any',
+        phone: '1234567890',
+        roles: ['admin'],
+        username: 'admin'
+      }
+    }
+    // const { data } = await getUserInfo({ /* Your params here */ })
     if (!data) {
       throw Error('Verification failed, please Login again.')
     }
