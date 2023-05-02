@@ -1,23 +1,26 @@
 <template>
     <div class="news-detail">
-        <div class="title">香港亚洲博览馆喜迎国际会展业务强劲反弹</div>
+        <div class="title">{{options.title}}</div>
         <div class="tips">
-            <span><i class="el-icon-view"></i>698</span>
-            <span>来源：去展网</span>
-            <span>2023-04-13</span>
+            <span><i class="el-icon-view"></i>{{options.views}}</span>
+            <span>来源：{{ options.origin }}</span>
+            <span>{{parseTime(new Date(options.create_date), '{y}-{m}-{d}')}}</span>
         </div>
         <el-divider></el-divider>
-        <div v-html="content"></div>
+        <div v-html="options.des"></div>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import { parseTime } from '@/utils/index'
 
 @Component({
 })
 export default class extends Vue {
-    private content = '<p>1234567</p>'
+    @Prop({ default: {} }) private options?: Object
+
+    private parseTime = parseTime
 }
 </script>
 

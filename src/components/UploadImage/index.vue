@@ -2,8 +2,9 @@
   <div class="upload-container">
     <el-upload
       class="avatar-uploader"
-      action="#"
-      :data="dataObj"
+      name="imgs"
+      :action="action"
+      :headers="headers"
       :multiple="false"
       :show-file-list="false"
       :on-success="handleImageSuccess"
@@ -16,23 +17,22 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { UserModule } from '@/store/modules/user'
 
 @Component({
   name: 'UploadImage'
 })
 export default class extends Vue {
-  @Prop({ default: '' }) private value!: string
+  @Prop({ default: '' }) private imageUrl!: string
 
-  private tempUrl = ''
-  private dataObj = { token: '', key: '' }
-
-  get imageUrl() {
-    return this.value
+  private action = process.env.VUE_APP_BASE_API + '/stage-api/upload'
+  private headers = {
+    'X-Access-Token': UserModule.token
   }
 
   private beforeAvatarUpload(file: any) {
-    const isJPG = file.type === 'image/jpeg' || 'image/png';
-    const isLt2M = file.size / 1024 / 1024 < 2;
+    const isJPG = file.type === 'image/jpeg' || 'image/png'
+    const isLt2M = file.size / 1024 / 1024 < 2
 
     if (!isJPG) {
       // this.$message.error('上传头像图片只能是 JPG 格式!');
@@ -40,11 +40,15 @@ export default class extends Vue {
     if (!isLt2M) {
       // this.$message.error('上传头像图片大小不能超过 2MB!');
     }
-    return isJPG && isLt2M;
+    return isJPG && isLt2M
   }
 
   private handleImageSuccess(res: any) {
-    console.log('1111111', res)
+    const { code, data } = res
+    if (code === 0) {
+      const url = process.env.VUE_APP_BASE_API + data[0].url
+      this.$emit('update:imageUrl', url)
+    }
   }
 }
 </script>

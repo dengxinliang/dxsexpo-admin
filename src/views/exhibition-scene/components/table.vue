@@ -15,28 +15,30 @@
           align="center"
           width="80"
         ></el-table-column>
-        <el-table-column label="图片" prop="imgUrl" width="80px">
-          <template slot-scope="{ row }">
+        <el-table-column label="图片" prop="img_list" width="80px">
+          <template slot-scope="{row}">
             <el-image
               style="width: 100%"
-              :src="row.imgUrl"
+              :src="row.img_list"
               fit="cover"
             ></el-image>
           </template>
         </el-table-column>
         <el-table-column
           label="行业类型"
-          prop="type"
+          prop="industry_name"
           min-width="100px"
         ></el-table-column>
         <el-table-column
           label="发布日期"
-          prop="times"
+          prop="create_date"
           min-width="120px"
-        ></el-table-column>
+        >
+          <template slot-scope="{row}">{{ parseTime(new Date(row.create_date), '{y}-{m}-{d}') }}</template>
+        </el-table-column>
         <el-table-column
           label="描述"
-          prop="describe"
+          prop="des"
           min-width="120px"
         ></el-table-column>
         <el-table-column
@@ -45,7 +47,7 @@
           min-width="120"
           class-name="fixed-width"
         >
-          <template slot-scope="{ row, $index }">
+          <template slot-scope="{row}">
             <el-button type="primary" size="mini" @click="tapDetail(row)">详情</el-button>
             <el-button type="primary" size="mini" @click="handleUpdate(row)"
               >编辑</el-button
@@ -53,7 +55,7 @@
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(row, $index)"
+              @click="handleDelete(row)"
               >删除</el-button
             >
           </template>
@@ -62,16 +64,20 @@
       <Pagination :total="total" :page="options.page" :limit="options.limit" />
     </div>
   </template>
-  
-  <script lang="ts">
-  import { Component, Vue, Prop } from "vue-property-decorator";
-  import Pagination from "@/components/Pagination/index.vue";
-  
+
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import Pagination from '@/components/Pagination/index.vue'
+import { parseTime } from '@/utils/index'
+import { exhibitionSceneDel } from '@/api/exhibitionScene'
+
   @Component({
-      components: { Pagination }
+    components: { Pagination }
   })
-  export default class extends Vue {
+export default class extends Vue {
     @Prop({ default: () => [] }) private list!: any[];
+
+    private parseTime = parseTime
     private tableKey = 0;
     private loading = false;
     private total = 10
@@ -79,15 +85,35 @@
       page: 1,
       limit: 10
     }
-  
+
     private handleUpdate(row: any) {
-      console.log(row);
+      this.$emit('tapEdit', row)
     }
+
     private handleDelete(row: any) {
-      console.log(row);
+      this.$confirm('确定要删除吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        const { code }: any = await exhibitionSceneDel(row.id)
+        if (code === 0) {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.$emit('tapDel')
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
     }
+
     private tapDetail(row: any) {
       this.$emit('tapDetail', row)
     }
-  }
-  </script>
+}
+</script>

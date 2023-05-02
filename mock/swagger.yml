@@ -8,8 +8,8 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-servers:
-  - url: /mock-api/v1
+# servers:
+#   - url: /mock-api/v1
 tags:
   - name: articles
     description: Articles data related api.

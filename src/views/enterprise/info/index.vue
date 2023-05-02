@@ -7,43 +7,43 @@
             label-position="right"
             label-width="120px"
         >
-            <el-form-item label="logo：" prop="imgUrl">
-                <UploadImage />
+            <el-form-item label="logo：" prop="logo">
+                <UploadImage :imageUrl.sync="options.logo" />
             </el-form-item>
             <el-form-item label="名称：" prop="name">
                 <el-input v-model="options.name" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="创建日期：" prop="times">
+            <el-form-item label="创建日期：" prop="create_date">
                 <el-date-picker
-                    v-model="options.times"
+                    v-model="options.create_date"
                     type="date"
                     placeholder="选择日期"
                     style="width: 100%;">
                 </el-date-picker>
             </el-form-item>
-            <el-form-item label="电话：" prop="tel">
-                <el-input v-model="options.tel" placeholder="请输入" />
+            <el-form-item label="电话：" prop="mobile">
+                <el-input v-model="options.mobile" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="邮箱：" prop="eml">
-                <el-input v-model="options.eml" placeholder="请输入" />
+            <el-form-item label="邮箱：" prop="email">
+                <el-input v-model="options.email" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="传真：" prop="chan">
-                <el-input v-model="options.chan" placeholder="请输入" />
+            <el-form-item label="传真：" prop="fax">
+                <el-input v-model="options.fax" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="地址：" prop="address">
                 <el-input v-model="options.address" placeholder="请输入" />
             </el-form-item>
-            <el-form-item label="介绍：" prop="describe">
+            <el-form-item label="介绍：" prop="des">
                 <Tinymce
-                    v-model="options.describe"
+                    v-model="options.des"
                     :height="400"
                 />
             </el-form-item>
-            <el-form-item label="企业照片：" prop="richText">
-                <UploadImageList />
+            <el-form-item label="企业照片：" prop="img_list">
+                <UploadImageList :fileList.sync="options.img_list" @tapFileList="tapFileList" />
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" size="mini">提交</el-button>
+                <el-button type="primary" size="mini" @click="submitForm('newsForm')">提交</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -51,16 +51,58 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
+import { Form } from 'element-ui'
 import UploadImage from '@/components/UploadImage/index.vue'
 import UploadImageList from '@/components/UploadImageList/index.vue'
 import Tinymce from '@/components/Tinymce/index.vue'
+import { company, companyAdd, companyEdit } from '@/api/enterprise'
 
 @Component({
-    components: { UploadImage, UploadImageList, Tinymce }
+  components: { UploadImage, UploadImageList, Tinymce }
 })
 export default class extends Vue {
-    private rules = {}
+    private rules = {
+      logo: [{ required: true, message: '不能为空' }],
+      name: [{ required: true, message: '不能为空' }],
+      create_date: [{ required: true, message: '不能为空' }],
+      mobile: [{ required: true, message: '不能为空' }],
+      email: [{ required: true, message: '不能为空' }],
+      address: [{ required: true, message: '不能为空' }]
+    }
+
     private options = {}
+    private imgList = []
+    private submitForm(formName: string) {
+      (this.$refs[formName] as Form).validate(async(valid: any) => {
+        if (valid) {
+          const params = {
+            ...this.options,
+            img_list: this.imgList
+          }
+          const url = Object.keys(this.options).length > 0 ? companyEdit : companyAdd
+          const { code }: any = await url(params)
+          if (code === 0) {
+            this.devData()
+          }
+        }
+      })
+    }
+
+    private tapFileList(list: any) {
+      this.imgList = list
+    }
+
+    private async devData() {
+      const params = {}
+      const { code, data }: any = await company(params)
+      if (code === 0) {
+        this.options = data || {}
+      }
+    }
+
+    created() {
+      this.devData()
+    }
 }
 </script>
 

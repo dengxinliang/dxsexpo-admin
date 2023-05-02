@@ -2,41 +2,63 @@
     <div class="upload-container upload-image-list">
       <el-upload
         class="upload-demo"
-        action="#"
         list-type="picture"
-        :data="dataObj"
+        name="imgs"
+        :action="action"
+        :headers="headers"
         :multiple="true"
         :file-list="fileList"
-        :on-preview="handlePreview"
+        :on-success="handleImageSuccess"
         :on-remove="handleRemove">
         <el-button size="small" type="primary">点击上传</el-button>
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
       </el-upload>
     </div>
   </template>
-  
-  <script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator'
-  
+
+<script lang="ts">
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import { UserModule } from '@/store/modules/user'
+
   @Component({
     name: 'UploadImageList'
   })
-  export default class extends Vue {
-    private fileList = [
-        {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, 
-        {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}
-    ]
-    private dataObj = { token: '', key: '' }
+export default class extends Vue {
+    @Prop({ default: () => [] }) private fileList?: any[]
+
+    private action = process.env.VUE_APP_BASE_API + '/stage-api/upload'
+    private headers = {
+      'X-Access-Token': UserModule.token
+    }
 
     private handleRemove(file: any, fileList: any) {
-        console.log(file, fileList);
+      this.initFile(fileList)
     }
-    private handlePreview(file: any) {
-        console.log(file);
+
+    private handleImageSuccess(res: any, file: any, fileList: any) {
+      this.initFile(fileList)
     }
-  }
-  </script>
-  
+
+    private initFile(fileList: any) {
+      const list = fileList.map((item: any) => {
+        if (item.response) {
+          const { data } = item.response
+          return {
+            name: item.name,
+            url: process.env.VUE_APP_BASE_API + data[0].url
+          }
+        } else {
+          return {
+            name: item.name,
+            url: item.url
+          }
+        }
+      })
+      this.$emit('tapFileList', list)
+    }
+}
+</script>
+
   <style lang="scss" scoped>
   .upload-container {
     width: 100%;
@@ -51,4 +73,3 @@
     }
   }
   </style>
-  

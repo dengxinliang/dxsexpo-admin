@@ -2,37 +2,33 @@
     <div class="plan-detail">
         <dl>
             <dt>
-                <img :src="options.img" alt="">
+                <img :src="options.logo" alt="">
             </dt>
             <dd>
-                <div class="title">{{ options.title }}</div>
-                <p>展会时间：{{ options.times }}</p>
+                <div class="title">{{ options.name }}</div>
+                <p>展会时间：{{ parseTime(new Date(options.exhibition_date), '{y}-{m}-{d}') }}</p>
                 <p>展会地点：{{ options.address }}</p>
-                <p>展会周期：{{ options.period }}</p>
+                <p>展会周期：{{ options.exhibition_cycle }}</p>
                 <p>承办方：{{ options.organizer }}</p>
             </dd>
         </dl>
         <div class="rich-text">
             <div class="title">展会介绍</div>
-            <div v-html="text"></div>
+            <div v-html="options.des"></div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
+import { parseTime } from '@/utils/index'
+
 @Component({
 })
 export default class extends Vue {
-    private options = {
-        img: require('@/assets/401-images/401.gif'),
-        title: '2023年日本东京国际化妆品技术展',
-        times: '2023年1月11日[星期三]-13日[星期五]',
-        address: '日本东京有明国际展览中心',
-        period: '一年一届',
-        organizer: '中国'
-    }
-    private text = '<p>1234</p><p>23455</p>'
+    @Prop({ default: {} }) private options?: Object
+
+    private parseTime = parseTime
 }
 </script>
 
@@ -41,8 +37,12 @@ export default class extends Vue {
     dl{
         display: flex;
         dt{
-            width: 480px;
+            width: 240px;
             margin-right: 20px;
+            img{
+                width: 100%;
+                display: block;
+            }
         }
         dd{
             .title{
