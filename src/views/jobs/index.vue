@@ -1,7 +1,7 @@
 <template>
     <div class="app-container">
         <Tinymce
-            v-model="describe"
+            v-model="options.des"
             :height="400"
         />
         <div class="btn">
@@ -17,14 +17,43 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Tinymce from '@/components/Tinymce/index.vue'
+import { recruit, recruitAdd, recruitEdit } from '@/api/jobs'
 
 @Component({
-    components: { Tinymce }
+  components: { Tinymce }
 })
 export default class extends Vue {
-    private describe = ''
+    private options = {}
 
-    private submit() {}
+    private async submit() {
+      const params = {
+        ...this.options
+      }
+      const { id }: any = this.options
+      const utl = id ? recruitEdit : recruitAdd
+      const { code }: any = await utl(params)
+      if (code === 0) {
+        this.$notify({
+          title: '成功',
+          message: id ? '修改成功' : '创建成功',
+          type: 'success',
+          duration: 2000
+        })
+        this.devData()
+      }
+    }
+
+    private async devData() {
+      const params = {}
+      const { code, data }: any = await recruit(params)
+      if (code === 0) {
+        this.options = data || {}
+      }
+    }
+
+    created() {
+      this.devData()
+    }
 }
 </script>
 

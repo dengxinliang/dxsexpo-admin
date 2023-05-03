@@ -1,5 +1,5 @@
 <template>
-    <div class="app-container"> 
+    <div class="app-container">
       <div class="btn">
         <el-button
             type="primary"
@@ -21,7 +21,7 @@
           align="center"
           width="80"
         >
-          <template slot-scope="{row, $index}">
+          <template slot-scope="{$index}">
             <span>{{ $index + 1 }}</span>
           </template>
         </el-table-column>
@@ -32,7 +32,8 @@
           <template slot-scope="{row}">
             <el-image
                 style="width: 100%;"
-                :src="row.imgUrl"
+                :src="row.img_list"
+                :preview-src-list="[row.img_list]"
                 fit="cover"></el-image>
           </template>
         </el-table-column>
@@ -43,20 +44,12 @@
         ></el-table-column> -->
         <el-table-column
           label="图片链接"
-          prop="imgUrl"
+          prop="img_list"
           min-width="120px"
-        >
-          <template slot-scope="{row}">
-            <el-image 
-              style="width: 100%; height: 100%;"
-              :src="row.imgUrl" 
-              :preview-src-list="[row.imgUrl]">
-            </el-image>
-          </template>
-        </el-table-column>
+        ></el-table-column>
         <el-table-column
           label="跳转链接"
-          prop="linkUrl"
+          prop="href"
           min-width="120px"
         ></el-table-column>
         <el-table-column
@@ -65,7 +58,7 @@
           width="120"
         >
           <template slot-scope="{row}">
-            {{ row.isShow ? '是' : '否' }}
+            {{ row.is_home === 1 ? '是' : '否' }}
           </template>
         </el-table-column>
         <el-table-column
@@ -73,7 +66,7 @@
           align="center"
           width="100"
         >
-          <template slot-scope="{row, $index}">
+          <template slot-scope="{$index}">
             <i class="el-icon-sort-down" v-if="$index < list.length"></i>
             <i class="el-icon-sort-up" v-if="$index > 0"></i>
           </template>
@@ -84,7 +77,7 @@
           min-width="120"
           class-name="fixed-width"
         >
-          <template slot-scope="{row, $index}">
+          <template slot-scope="{row}">
             <el-button
               type="primary"
               size="mini"
@@ -93,12 +86,12 @@
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(row, $index)"
+              @click="handleDelete(row)"
             >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-  
+
       <el-dialog
         :title="textMap[dialogStatus]"
         :visible.sync="dialogFormVisible"
@@ -110,14 +103,14 @@
           label-position="right"
           label-width="120px"
         >
-          <el-form-item label="banner图片：" prop="imgUrl">
-            <UploadImage />
+          <el-form-item label="banner图片：" prop="img_list">
+            <UploadImage :imageUrl.sync="dialogData.img_list" />
           </el-form-item>
-          <el-form-item label="跳转链接：" prop="linkUrl">
-            <el-input v-model="dialogData.link" placeholder="请输入" />
+          <el-form-item label="跳转链接：" prop="href">
+            <el-input v-model="dialogData.href" placeholder="请输入" />
           </el-form-item>
-          <el-form-item label="是否首页展示：" prop="isShow">
-            <el-radio-group v-model="dialogData.isShow">
+          <el-form-item label="是否首页展示：" prop="is_home">
+            <el-radio-group v-model="dialogData.is_home">
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
             </el-radio-group>
@@ -136,111 +129,129 @@
       </el-dialog>
     </div>
   </template>
-  
-  <script lang="ts">
-  import { Component, Vue } from 'vue-property-decorator'
-  import { Form } from 'element-ui'
-  import UploadImage from '@/components/UploadImage/index.vue'
-  
+
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator'
+import { Form } from 'element-ui'
+import UploadImage from '@/components/UploadImage/index.vue'
+import { banner, bannerAdd, bannerEdit, bannerDel } from '@/api/banner'
+
   @Component({
     name: 'Banner',
     components: { UploadImage }
   })
-  export default class extends Vue {
+export default class extends Vue {
     private tableKey = 0
     private list = []
     private listLoading = true
     private dialogFormVisible = false
     private dialogStatus = ''
     private textMap = {
-      add: '新增',
       update: '编辑',
-      create: 'Create'
+      create: '新增'
     }
-  
+
     private rules = {
-      imgUrl: [{ required: true, message: '请上传图片', trigger: 'blur' }]
+      img_list: [{ required: true, message: '请上传图片', trigger: 'blur' }]
     }
-  
+
     private dialogData = {}
-  
+
     created() {
       this.getList()
     }
-  
+
     private async getList() {
       this.listLoading = true
-      // Just to simulate the time of the request
-      setTimeout(() => {
+      const params = {}
+      const { code, data }: any = await banner(params)
+      if (code === 0) {
+        this.list = data || []
         this.listLoading = false
-      }, 0.5 * 1000)
+      }
     }
-  
-    private handleFilter() {
-      this.getList()
-    }
-  
+
     private createData() {
       (this.$refs.dataForm as Form).validate(async(valid) => {
         if (valid) {
-          console.log('11111', this.dialogData)
-          this.dialogFormVisible = false
-          this.$notify({
-            title: '成功',
-            message: '创建成功',
-            type: 'success',
-            duration: 2000
-          })
+          const params = this.dialogData
+          const { code }: any = await bannerAdd(params)
+          if (code === 0) {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '创建成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          }
         }
       })
     }
 
     private handleAdd() {
-      this.dialogStatus = 'add'
+      this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
         (this.$refs.dataForm as Form).clearValidate()
       })
     }
-  
+
     private handleUpdate(row: any) {
-      console.log(row)
+      this.dialogData = row
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
         (this.$refs.dataForm as Form).clearValidate()
       })
     }
-  
+
     private updateData() {
       (this.$refs.dataForm as Form).validate(async(valid) => {
         if (valid) {
-          this.dialogFormVisible = false
-          this.$notify({
-            title: '成功',
-            message: '更新成功',
-            type: 'success',
-            duration: 2000
-          })
+          const params = this.dialogData
+          const { code }: any = await bannerEdit(params)
+          if (code === 0) {
+            this.dialogFormVisible = false
+            this.$notify({
+              title: '成功',
+              message: '更新成功',
+              type: 'success',
+              duration: 2000
+            })
+            this.getList()
+          }
         }
       })
     }
-  
-    private handleDelete(row: any, index: number) {
-      this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
-        type: 'success',
-        duration: 2000
+
+    private handleDelete(row: any) {
+      this.$confirm('确定要删除吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        const { code }: any = await bannerDel(row.id)
+        if (code === 0) {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.getList()
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
-      this.list.splice(index, 1)
     }
-  }
-  </script>
+}
+</script>
 
   <style lang="scss" scoped>
   .btn{
     margin-bottom: 10px;
   }
   </style>
-  

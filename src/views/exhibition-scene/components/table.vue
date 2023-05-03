@@ -87,7 +87,11 @@ export default class extends Vue {
     }
 
     private handleUpdate(row: any) {
-      this.$emit('tapEdit', row)
+      const obj = {
+        ...row,
+        site_photos: row.site_photos ? JSON.parse(row.site_photos) : row.site_photos
+      }
+      this.$emit('tapEdit', obj)
     }
 
     private handleDelete(row: any) {

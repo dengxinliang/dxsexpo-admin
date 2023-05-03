@@ -14,12 +14,26 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import Table from './components/table.vue'
+import { getUsers } from '@/api/users'
 
 @Component({
-    components: { Table }
+  components: { Table }
 })
 export default class extends Vue {
-    private handleAdd() {}
+    private list = []
+    // private handleAdd() {}
+
+    private async devData() {
+      const params = {}
+      const { code, data }: any = await getUsers(params)
+      if (code === 0) {
+        this.list = data || []
+      }
+    }
+
+    created() {
+      this.devData()
+    }
 }
 </script>
 

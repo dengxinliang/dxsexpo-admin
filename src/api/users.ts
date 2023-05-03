@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export const getUsers = (params: any) =>
   request({
-    url: '/users',
+    url: '/stage-api/user',
     method: 'get',
     params
   })
@@ -20,16 +20,23 @@ export const getUserByName = (username: string) =>
     method: 'get'
   })
 
-export const updateUser = (username: string, data: any) =>
+export const addUser = (data: any) =>
   request({
-    url: `/users/${username}`,
+    url: '/stage-api/user',
+    method: 'post',
+    data
+  })
+
+export const updateUser = (data: any) =>
+  request({
+    url: '/stage-api/user',
     method: 'put',
     data
   })
 
-export const deleteUser = (username: string) =>
+export const deleteUser = (id: number) =>
   request({
-    url: `/users/${username}`,
+    url: `/stage-api/user/${id}`,
     method: 'delete'
   })
 

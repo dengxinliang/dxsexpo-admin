@@ -73,7 +73,9 @@ export default class extends Vue {
         if (valid) {
           const params = {
             ...this.options,
-            site_photos: this.fileList
+            site_photos: JSON.stringify(this.fileList),
+            industry_name: String,
+            industry_dictionary: String || Number
           }
           const url = this.isEdit ? exhibitionSceneEdit : exhibitionSceneAdd
           const { code }: any = await url(params)

@@ -77,11 +77,18 @@ export default class extends Vue {
         if (valid) {
           const params = {
             ...this.options,
-            img_list: this.imgList
+            img_list: JSON.stringify(this.imgList)
           }
-          const url = Object.keys(this.options).length > 0 ? companyEdit : companyAdd
+          const { id }: any = this.options
+          const url = id ? companyEdit : companyAdd
           const { code }: any = await url(params)
           if (code === 0) {
+            this.$notify({
+              title: '成功',
+              message: id ? '修改成功' : '创建成功',
+              type: 'success',
+              duration: 2000
+            })
             this.devData()
           }
         }
@@ -96,7 +103,11 @@ export default class extends Vue {
       const params = {}
       const { code, data }: any = await company(params)
       if (code === 0) {
-        this.options = data || {}
+        const obj = data || {}
+        this.options = {
+          ...obj,
+          img_list: obj.img_list ? JSON.parse(obj.img_list) : obj.img_list
+        }
       }
     }
 

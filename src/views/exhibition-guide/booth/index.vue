@@ -32,7 +32,7 @@
                 <template slot-scope="{row}">
                     <el-image
                         style="width: 100%;"
-                        :src="row.imgUrl"
+                        :src="row.img_list"
                         fit="cover"></el-image>
                 </template>
             </el-table-column>
@@ -43,7 +43,7 @@
             ></el-table-column>
             <el-table-column
                 label="描述"
-                prop="tips"
+                prop="des"
                 min-width="120px"
             ></el-table-column>
             <el-table-column
@@ -62,7 +62,7 @@
                 min-width="120"
                 class-name="fixed-width"
             >
-                <template slot-scope="{row, $index}">
+                <template slot-scope="{row}">
                     <el-button
                         type="primary"
                         size="mini"
@@ -71,7 +71,7 @@
                     <el-button
                         size="mini"
                         type="danger"
-                        @click="handleDelete(row, $index)"
+                        @click="handleDelete(row)"
                     >删除</el-button>
                 </template>
             </el-table-column>
@@ -90,13 +90,23 @@
                 <el-form-item label="标题：" prop="title">
                     <el-input v-model="dialogData.options.title" placeholder="请输入" />
                 </el-form-item>
-                <el-form-item label="描述：" prop="tips">
-                    <el-input v-model="dialogData.options.tips" type="textarea" :rows="2" placeholder="请输入" />
+                <el-form-item label="描述：" prop="des">
+                    <el-input v-model="dialogData.options.des" type="textarea" :rows="2" placeholder="请输入" />
                 </el-form-item>
-                <el-form-item label="图片：" prop="imgUrl">
-                    <UploadImage />
+                <el-form-item label="图片：" prop="img_list">
+                    <UploadImage :imageUrl.sync="dialogData.options.img_list" />
                 </el-form-item>
             </el-form>
+            <div
+                slot="footer"
+                class="dialog-footer"
+            >
+                <el-button @click="dialogData.isShow = false">取消</el-button>
+                <el-button
+                    type="primary"
+                    @click="submit"
+                >确定</el-button>
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -104,35 +114,93 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import UploadImage from '@/components/UploadImage/index.vue'
+import { exhibitionDesign, exhibitionDesignAdd, exhibitionDesignEdit, exhibitionDesignDel } from '@/api/exhibition-guide'
 
 @Component({
-    components: { UploadImage }
+  components: { UploadImage }
 })
 export default class extends Vue {
     private tableKey = 0
     private listLoading = false
     private list = []
     private dialogData = {
-        isShow: false,
-        status: '',
-        title: '',
-        options: {}
+      isShow: false,
+      status: '',
+      title: '',
+      options: {}
     }
+
     private rules = {}
 
     private handleAdd() {
-        this.dialogData = {
-            isShow: true,
-            status: 'add',
-            title: '新增',
-            options: {}
-        }
+      this.dialogData = {
+        isShow: true,
+        status: 'add',
+        title: '新增',
+        options: {}
+      }
     }
+
     private handleUpdate(row: any) {
-        console.log(row)
+      this.dialogData = {
+        isShow: true,
+        status: 'edit',
+        title: '编辑',
+        options: row
+      }
     }
-    private handleDelete(row: any, index: number) {
-        console.log(row, index)
+
+    private handleDelete(row: any) {
+      this.$confirm('确定要删除吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        const { code }: any = await exhibitionDesignDel(row.id)
+        if (code === 0) {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.devData()
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    }
+
+    private async submit() {
+      const { status, options } = this.dialogData
+      const params = options
+      const url = status === 'add' ? exhibitionDesignAdd : exhibitionDesignEdit
+      const { code }: any = await url(params)
+      if (code === 0) {
+        this.dialogData.isShow = false
+        this.$notify({
+          title: '成功',
+          message: status === 'add' ? '创建成功' : '编辑成功',
+          type: 'success',
+          duration: 2000
+        })
+        this.devData()
+      }
+    }
+
+    private async devData() {
+      this.listLoading = true
+      const params = {}
+      const { code, data }: any = await exhibitionDesign(params)
+      if (code === 0) {
+        this.list = data || []
+        this.listLoading = false
+      }
+    }
+
+    created() {
+      this.devData()
     }
 }
 </script>

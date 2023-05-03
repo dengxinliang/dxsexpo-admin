@@ -74,7 +74,9 @@ export default class extends Vue {
       (this.$refs.dataForm as Form).validate(async(valid) => {
         if (valid) {
           const params = {
-            ...this.options
+            ...this.options,
+            industry_name: String,
+            industry_dictionary: String || Number
           }
           const url = this.isEdit ? exhibitionPlanEdit : exhibitionPlanAdd
           const { code }: any = await url(params)

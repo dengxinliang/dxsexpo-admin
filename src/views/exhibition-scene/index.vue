@@ -13,7 +13,7 @@
             :visible.sync="dialogData.isShow"
             width="640px"
         >
-            <Updata :options="dialogData.options" @submit="submit" @cancel="dialogData.isShow = false" />
+            <Updata :options="dialogData.options" :isEdit="dialogData.isEdit" @submit="submit" @cancel="dialogData.isShow = false" />
         </el-dialog>
         <el-dialog
             title="详情"
