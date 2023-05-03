@@ -6,7 +6,8 @@
             </dt>
             <dd>
                 <div class="title">{{ options.name }}</div>
-                <p>展会时间：{{ parseTime(new Date(options.exhibition_date), '{y}-{m}-{d}') }}</p>
+                <!-- <p>展会时间：{{ parseTime(new Date(options.exhibition_date), '{y}-{m}-{d}') }}</p> -->
+                <p>展会时间：{{ options.exhibition_date }}</p>
                 <p>展会地点：{{ options.address }}</p>
                 <p>展会周期：{{ options.exhibition_cycle }}</p>
                 <p>承办方：{{ options.organizer }}</p>

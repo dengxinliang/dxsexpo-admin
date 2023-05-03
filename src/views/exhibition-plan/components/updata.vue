@@ -15,8 +15,11 @@
         <el-form-item label="展会日期：" prop="exhibition_date">
             <el-date-picker
                 v-model="options.exhibition_date"
-                type="date"
+                type="daterange"
                 placeholder="选择日期"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
                 style="width: 100%;">
             </el-date-picker>
         </el-form-item>
@@ -57,6 +60,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import UploadImage from '@/components/UploadImage/index.vue'
 import Tinymce from '@/components/Tinymce/index.vue'
 import { Form } from 'element-ui'
+import { parseTime } from '@/utils/index'
 import { industryCategory } from '@/api/exhibitionType'
 import { exhibitionPlanAdd, exhibitionPlanEdit } from '@/api/exhibitionPlan'
 
@@ -67,14 +71,18 @@ export default class extends Vue {
     @Prop({ default: () => ({}) }) private options!: object
     @Prop({ default: false }) private isEdit!: boolean
 
+    private parseTime = parseTime
+
     private rules = {}
     private industryRows = []
 
     private onSubmit() {
       (this.$refs.dataForm as Form).validate(async(valid) => {
         if (valid) {
+          const { exhibition_date: exhibitionDate }: any = this.options
           const params = {
             ...this.options,
+            exhibition_date: exhibitionDate?.map((item: any) => parseTime(new Date(item), '{y}-{m}-{d}')).join('~'),
             industry_name: String,
             industry_dictionary: String || Number
           }

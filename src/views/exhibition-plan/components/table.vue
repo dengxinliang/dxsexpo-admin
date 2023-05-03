@@ -34,7 +34,7 @@
         prop="exhibition_date"
         min-width="80px"
       >
-        <template slot-scope="{row}">{{ parseTime(new Date(row.exhibition_date), '{y}-{m}-{d}') }}</template>
+        <!-- <template slot-scope="{row}">{{ parseTime(new Date(row.exhibition_date), '{y}-{m}-{d}') }}</template> -->
       </el-table-column>
       <el-table-column
         label="展会地址"
@@ -102,7 +102,11 @@ export default class extends Vue {
   private parseTime = parseTime
 
   private handleUpdate(row: any) {
-    this.$emit('tapEdit', row)
+    const obj = {
+      ...row,
+      exhibition_date: row.exhibition_date?.split('~')
+    }
+    this.$emit('tapEdit', obj)
   }
 
   private handleDelete(row: any) {
