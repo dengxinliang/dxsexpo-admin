@@ -40,7 +40,9 @@ export default class extends Vue {
       isShow: false,
       title: '',
       isEdit: false,
-      options: {}
+      options: {
+        site_photos: []
+      }
     }
 
     private detailData = {
@@ -62,7 +64,9 @@ export default class extends Vue {
         isShow: true,
         title: '新增',
         isEdit: false,
-        options: {}
+        options: {
+          site_photos: []
+        }
       }
     }
 

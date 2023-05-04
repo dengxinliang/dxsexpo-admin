@@ -15,6 +15,11 @@
           align="center"
           width="80"
         ></el-table-column>
+        <el-table-column
+          label="展会名称"
+          prop="des"
+          min-width="120px"
+        ></el-table-column>
         <el-table-column label="图片" prop="img_list" width="80px">
           <template slot-scope="{row}">
             <el-image
@@ -36,11 +41,6 @@
         >
           <template slot-scope="{row}">{{ parseTime(new Date(row.create_date), '{y}-{m}-{d}') }}</template>
         </el-table-column>
-        <el-table-column
-          label="描述"
-          prop="des"
-          min-width="120px"
-        ></el-table-column>
         <el-table-column
           label="操作"
           align="center"

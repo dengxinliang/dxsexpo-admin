@@ -29,7 +29,7 @@
         <el-form-item label="展会周期：" prop="exhibition_cycle">
             <el-input v-model="options.exhibition_cycle" placeholder="请输入" />
         </el-form-item>
-        <el-form-item label="承办方：" prop="organizer">
+        <el-form-item label="主办方：" prop="organizer">
             <el-input v-model="options.organizer" placeholder="请输入" />
         </el-form-item>
         <el-form-item label="行业类型：" prop="industry_category_id">
@@ -45,6 +45,12 @@
         <el-form-item label="展会介绍：" prop="des">
             <Tinymce
                 v-model="options.des"
+                :height="400"
+            />
+        </el-form-item>
+        <el-form-item label="展品范围：" prop="exhibition_scope">
+            <Tinymce
+                v-model="options.exhibition_scope"
                 :height="400"
             />
         </el-form-item>

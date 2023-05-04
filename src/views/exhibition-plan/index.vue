@@ -44,7 +44,8 @@ export default class extends Vue {
       title: '',
       isEdit: false,
       options: {
-        des: ''
+        des: '',
+        exhibition_scope: ''
       }
     }
 
@@ -59,7 +60,8 @@ export default class extends Vue {
         title: '新增',
         isEdit: false,
         options: {
-          des: ''
+          des: '',
+          exhibition_scope: ''
         }
       }
     }

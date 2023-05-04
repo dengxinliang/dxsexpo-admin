@@ -108,6 +108,7 @@ export default class extends Vue {
           ...obj,
           img_list: obj.img_list ? JSON.parse(obj.img_list) : obj.img_list
         }
+        this.imgList = obj.img_list ? JSON.parse(obj.img_list) : obj.img_list
       }
     }
 

@@ -6,6 +6,12 @@
         label-position="right"
         label-width="120px"
     >
+        <el-form-item label="展会名称：" prop="des">
+            <el-input
+                v-model="options.des"
+                placeholder="请输入"
+            />
+        </el-form-item>
         <el-form-item label="图片：" prop="img_list">
             <UploadImage :imageUrl.sync="options.img_list" />
         </el-form-item>
@@ -26,14 +32,6 @@
                 placeholder="选择日期"
                 style="width: 100%;">
             </el-date-picker>
-        </el-form-item>
-        <el-form-item label="描述：" prop="des">
-            <el-input
-                v-model="options.des"
-                type="textarea"
-                :rows="2"
-                placeholder="请输入"
-            />
         </el-form-item>
         <el-form-item label="现场照：" prop="site_photos">
             <UploadImageList :fileList.sync="options.site_photos" @tapFileList="tapFileList" />
@@ -57,12 +55,12 @@ import { exhibitionSceneAdd, exhibitionSceneEdit } from '@/api/exhibitionScene'
   components: { UploadImage, UploadImageList }
 })
 export default class extends Vue {
-    @Prop({ default: () => ({}) }) private options!: object
+    @Prop({ default: () => ({}) }) private options!: any
     @Prop({ default: false }) private isEdit!: boolean
 
     private rules = {}
     private industryRows = []
-    private fileList = []
+    private fileList = this.options?.site_photos
 
     private tapFileList(list: any) {
       this.fileList = list

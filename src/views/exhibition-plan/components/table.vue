@@ -47,7 +47,7 @@
         min-width="80px"
       ></el-table-column>
       <el-table-column
-        label="承办方"
+        label="主办方"
         prop="organizer"
         min-width="80px"
       ></el-table-column>

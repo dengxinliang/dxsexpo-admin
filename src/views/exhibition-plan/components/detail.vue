@@ -10,12 +10,16 @@
                 <p>展会时间：{{ options.exhibition_date }}</p>
                 <p>展会地点：{{ options.address }}</p>
                 <p>展会周期：{{ options.exhibition_cycle }}</p>
-                <p>承办方：{{ options.organizer }}</p>
+                <p>主办方：{{ options.organizer }}</p>
             </dd>
         </dl>
         <div class="rich-text">
             <div class="title">展会介绍</div>
             <div v-html="options.des"></div>
+        </div>
+        <div class="rich-text">
+            <div class="title">展品范围</div>
+            <div v-html="options.exhibition_scope"></div>
         </div>
     </div>
 </template>
