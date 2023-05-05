@@ -191,6 +191,7 @@ export default class extends Vue {
     }
 
     private handleAdd() {
+      this.dialogData = {}
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
