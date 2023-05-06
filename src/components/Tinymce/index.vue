@@ -61,7 +61,9 @@ import 'tinymce/plugins/wordcount'
 import TinymceEditor from '@tinymce/tinymce-vue' // TinyMCE vue wrapper
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { AppModule } from '@/store/modules/app'
+import { UserModule } from '@/store/modules/user'
 import { plugins, toolbar } from './config'
+import request from '@/utils/request'
 
 const defaultId = () => 'vue-tinymce-' + +new Date() + ((Math.random() * 1000).toFixed(0) + '')
 
@@ -115,7 +117,7 @@ export default class extends Vue {
       toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
       menubar: false,
       plugins: plugins,
-      images_upload_url: '', // 上传图片api地址
+      images_upload_url: process.env.VUE_APP_BASE_API + '/stage-api/upload', // 上传图片api地址
       language: this.language,
       language_url: `${process.env.BASE_URL}tinymce/langs/${this.language}.js`,
       skin_url: `${process.env.BASE_URL}tinymce/skins/`,
@@ -142,6 +144,9 @@ export default class extends Vue {
           this.$emit('input', editor.getContent())
         })
       },
+      images_upload_handler: (blobInfo: any, success: any) => {
+        this.handleImgUpload(blobInfo, success)
+      },
       setup: (editor: any) => {
         editor.on('FullscreenStateChanged', (e: any) => {
           this.fullscreen = e.state
@@ -161,6 +166,24 @@ export default class extends Vue {
       tinymceInstance.destroy()
     }
     this.$nextTick(() => tinymceManager.init(this.initOptions))
+  }
+
+  private handleImgUpload(blobInfo: any, success: any) {
+    const formdata = new FormData()
+    formdata.append('imgs', blobInfo.blob())
+    request({
+      url: '/stage-api/upload',
+      method: 'post',
+      data: formdata,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'X-Access-Token': UserModule.token
+      }
+    }).then(({ code, data }: any) => {
+      if (code === 0) {
+        success(process.env.VUE_APP_BASE_API + data[0].url)
+      }
+    })
   }
 }
 </script>
