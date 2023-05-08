@@ -115,6 +115,9 @@ export default class extends Vue {
       body_class: 'panel-body',
       object_resizing: false,
       toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
+      fontsize_formats: '12px 14px 16px 18px 24px 36px 48px 56px 72px',
+      font_formats:
+          '微软雅黑=Microsoft YaHei,Helvetica Neue,PingFang SC,sans-serif;苹果苹方=PingFang SC,Microsoft YaHei,sans-serif;宋体=simsun,serif;仿宋体=FangSong,serif;黑体=SimHei,sans-serif;Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Book Antiqua=book antiqua,palatino;',
       menubar: false,
       plugins: plugins,
       images_upload_url: process.env.VUE_APP_BASE_API + '/stage-api/upload', // 上传图片api地址

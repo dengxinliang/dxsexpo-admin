@@ -5,4 +5,4 @@ export const plugins = ['advlist anchor autolink autoresize autosave charmap cod
 
 // Here is the list of toolbar control components
 // Details see: https://www.tinymce.com/docs/advanced/editor-control-identifiers/#toolbarcontrols
-export const toolbar = ['bold italic underline strikethrough alignleft aligncenter alignright outdent indent blockquote removeformat subscript superscript help hr bullist numlist link image media table forecolor backcolor fullscreen']
+export const toolbar = ['formatselect fontselect fontsizeselect bold italic underline strikethrough alignleft aligncenter alignright outdent indent blockquote removeformat subscript superscript help hr bullist numlist link image media table forecolor backcolor fullscreen']
