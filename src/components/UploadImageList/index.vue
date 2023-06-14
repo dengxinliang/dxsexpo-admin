@@ -7,12 +7,22 @@
         :action="action"
         :headers="headers"
         :multiple="true"
-        :file-list="fileList"
-        :on-success="handleImageSuccess"
-        :on-remove="handleRemove">
+        :show-file-list="false"
+        :on-success="handleImageSuccess">
         <el-button size="small" type="primary">点击上传</el-button>
         <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
       </el-upload>
+      <div class="file-item" v-for="(item, index) in fileList" :key="index">
+        <div class="info">
+          <img :src="'http://www.expoes.com.cn' + item.url" alt="">
+          <span>{{ item.name }}</span>
+        </div>
+        <div class="options">
+          <i class="el-icon-top" @click="swapArray(fileList, index, index - 1)" v-if="index > 0"></i>
+          <i class="el-icon-bottom" @click="swapArray(fileList, index, index + 1)" v-if="index < fileList.length - 1"></i>
+          <i class="el-icon-delete" @click="remove(index)"></i>
+        </div>
+      </div>
     </div>
   </template>
 
@@ -31,30 +41,25 @@ export default class extends Vue {
       'X-Access-Token': UserModule.token
     }
 
-    private handleRemove(file: any, fileList: any) {
-      this.initFile(fileList)
+    private handleImageSuccess(res: any, file: any) {
+      console.log(res)
+      if (file.status === 'success') {
+        const list = this.fileList
+        list?.push({
+          name: file.name,
+          url: file.response.data[0].url
+        })
+        this.$emit('update:fileList', list)
+      }
     }
 
-    private handleImageSuccess(res: any, file: any, fileList: any) {
-      this.initFile(fileList)
+    private remove(index: number) {
+      this.fileList?.splice(index, 1)
     }
 
-    private initFile(fileList: any) {
-      const list = fileList.map((item: any) => {
-        if (item.response) {
-          const { data } = item.response
-          return {
-            name: item.name,
-            url: process.env.VUE_APP_BASE_API + data[0].url
-          }
-        } else {
-          return {
-            name: item.name,
-            url: item.url
-          }
-        }
-      })
-      this.$emit('tapFileList', list)
+    private swapArray(arr: any, index: number, newIndex: number) {
+      arr[index] = arr.splice(newIndex, 1, arr[index])[0]
+      this.$emit('update:fileList', arr)
     }
 }
 </script>
@@ -70,6 +75,33 @@ export default class extends Vue {
   .upload-image-list{
     .el-upload{
         width: auto;
+    }
+  }
+  .file-item{
+    padding: 6px;
+    margin: 6px 0;
+    border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .info{
+      display: flex;
+      align-items: center;
+    }
+    .options{
+      padding-right: 20px;
+      i{
+        font-size: 20px;
+        margin: 0 10px;
+        cursor: pointer;
+      }
+    }
+    img{
+      width: 80px;
+      height: 80px;
+      display: block;
+      margin-right: 10px;
     }
   }
   </style>

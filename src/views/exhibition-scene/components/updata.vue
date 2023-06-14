@@ -34,7 +34,7 @@
             </el-date-picker>
         </el-form-item>
         <el-form-item label="现场照：" prop="site_photos">
-            <UploadImageList :fileList.sync="options.site_photos" @tapFileList="tapFileList" />
+            <UploadImageList :fileList.sync="options.site_photos" />
         </el-form-item>
         <el-form-item>
             <el-button type="primary" @click="onSubmit">确定</el-button>
@@ -60,18 +60,14 @@ export default class extends Vue {
 
     private rules = {}
     private industryRows = []
-    private fileList = this.options?.site_photos
-
-    private tapFileList(list: any) {
-      this.fileList = list
-    }
 
     private onSubmit() {
       (this.$refs.newsForm as Form).validate(async(valid) => {
         if (valid) {
+          const options: any = this.options
           const params = {
-            ...this.options,
-            site_photos: JSON.stringify(this.fileList),
+            ...options,
+            site_photos: options.site_photos ? JSON.stringify(options.site_photos) : '',
             industry_name: String,
             industry_dictionary: String || Number
           }

@@ -40,7 +40,7 @@
                 />
             </el-form-item>
             <el-form-item label="企业照片：" prop="img_list">
-                <UploadImageList :fileList.sync="options.img_list" @tapFileList="tapFileList" />
+                <UploadImageList :fileList.sync="options.img_list" />
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" size="mini" @click="submitForm('newsForm')">提交</el-button>
@@ -70,16 +70,16 @@ export default class extends Vue {
       address: [{ required: true, message: '不能为空' }]
     }
 
-    private options = {}
-    private imgList = []
+    private options: any = {}
     private submitForm(formName: string) {
       (this.$refs[formName] as Form).validate(async(valid: any) => {
         if (valid) {
+          const options: any = this.options
           const params = {
-            ...this.options,
-            img_list: JSON.stringify(this.imgList)
+            ...options,
+            img_list: options.img_list ? JSON.stringify(options.img_list) : ''
           }
-          const { id }: any = this.options
+          const { id }: any = options
           const url = id ? companyEdit : companyAdd
           const { code }: any = await url(params)
           if (code === 0) {
@@ -95,10 +95,6 @@ export default class extends Vue {
       })
     }
 
-    private tapFileList(list: any) {
-      this.imgList = list
-    }
-
     private async devData() {
       const params = {}
       const { code, data }: any = await company(params)
@@ -108,7 +104,6 @@ export default class extends Vue {
           ...obj,
           img_list: obj.img_list ? JSON.parse(obj.img_list) : obj.img_list
         }
-        this.imgList = obj.img_list ? JSON.parse(obj.img_list) : obj.img_list
       }
     }
 
