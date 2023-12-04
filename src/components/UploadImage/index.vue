@@ -46,7 +46,7 @@ export default class extends Vue {
   private handleImageSuccess(res: any) {
     const { code, data } = res
     if (code === 0) {
-      const url = process.env.VUE_APP_BASE_API + data[0].url
+      const url = data[0].url
       this.$emit('update:imageUrl', url)
     }
   }

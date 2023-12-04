@@ -8,7 +8,7 @@ const devServerPort = 9527 // TODO: get this variable from setting.ts
 const name = '东新盛（上海）展览有限公司' // TODO: get this variable from setting.ts
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/dxsexpo-admin/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? 'https://dxsexpo-oss.oss-cn-shanghai.aliyuncs.com/dxsexpo-admin/' : '/',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {

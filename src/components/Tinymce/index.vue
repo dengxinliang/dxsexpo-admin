@@ -123,7 +123,7 @@ export default class extends Vue {
       images_upload_url: process.env.VUE_APP_BASE_API + '/stage-api/upload', // 上传图片api地址
       language: this.language,
       language_url: `${process.env.BASE_URL}tinymce/langs/${this.language}.js`,
-      skin_url: `${process.env.BASE_URL}tinymce/skins/`,
+      skin_url: `${process.env.BASE_URL}tinymce/skins`,
       emoticons_database_url: `${process.env.BASE_URL}tinymce/emojis.min.js`,
       end_container_on_empty_block: true,
       powerpaste_word_import: 'clean',
@@ -184,7 +184,7 @@ export default class extends Vue {
       }
     }).then(({ code, data }: any) => {
       if (code === 0) {
-        success(process.env.VUE_APP_BASE_API + data[0].url)
+        success(data[0].url)
       }
     })
   }
